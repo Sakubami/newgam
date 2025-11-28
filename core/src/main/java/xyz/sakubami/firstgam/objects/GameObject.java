@@ -2,20 +2,41 @@ package xyz.sakubami.firstgam.objects;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
+import xyz.sakubami.firstgam.saving.Serializable;
+import xyz.sakubami.firstgam.saving.SerializedObject;
 
-public abstract class GameObject {
-    private final float x;
-    private final float y;
-    private final float width;
-    private final float height;
+public abstract class GameObject implements Serializable<SerializedObject> {
+    private int x;
+    private int y;
+    private float width;
+    private float height;
     private final TextureRegion texture;
 
     public GameObject(float width, float height, TextureRegion texture) {
-        this.x = 0f;
-        this.y = 0f;
+        this.x = 0;
+        this.y = 0;
         this.width = width;
         this.height = height;
         this.texture = texture;
+    }
+
+    @Override
+    public SerializedObject toData() {
+        SerializedObject data = new SerializedObject();
+        data.x = x;
+        data.y = y;
+        data.width = width;
+        data.height = height;
+        data.type = this.getClass().getSimpleName();
+        return data;
+    }
+
+    @Override
+    public void fromData(SerializedObject data) {
+        this.x = data.x;
+        this.y = data.y;
+        this.width = data.width;
+        this.height = data.height;
     }
 
     public float getX() { return x; }

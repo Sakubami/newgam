@@ -55,8 +55,6 @@ public class TitleScreen implements Screen {
         }
     }
 
-    // i dont like this
-
     @Override public void dispose() {
         batch.dispose();
         font.dispose();

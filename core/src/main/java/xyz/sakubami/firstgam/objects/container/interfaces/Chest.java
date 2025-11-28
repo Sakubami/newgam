@@ -1,6 +1,7 @@
 package xyz.sakubami.firstgam.objects.container.interfaces;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import xyz.sakubami.firstgam.saving.SerializedObject;
 
 public class Chest extends InterfaceHolder {
     public Chest(float width, float height, TextureRegion texture) {
