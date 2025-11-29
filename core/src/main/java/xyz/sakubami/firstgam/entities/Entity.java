@@ -1,23 +1,22 @@
 package xyz.sakubami.firstgam.entities;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import xyz.sakubami.firstgam.rendering.EntityRenderer;
 import xyz.sakubami.firstgam.saving.Serializable;
 import xyz.sakubami.firstgam.saving.SerializedEntity;
 import xyz.sakubami.firstgam.textures.TextureManager;
-import xyz.sakubami.firstgam.textures.entities.EntityTexture;
+import xyz.sakubami.firstgam.textures.entities.EntityType;
 
 import java.util.UUID;
 
 public abstract class Entity implements Serializable<SerializedEntity> {
     private float x;
     private float y;
-    private final EntityTexture textureT;
+    private final EntityType textureT;
     private final TextureRegion texture;
     private final String id;
     private final UUID uuid;
 
-    public Entity(EntityTexture textureT, String id) {
+    public Entity(EntityType textureT, String id) {
         this.x = 0;
         this.y = 0;
         this.textureT = textureT;

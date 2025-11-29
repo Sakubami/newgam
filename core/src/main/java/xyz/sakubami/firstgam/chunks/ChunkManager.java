@@ -22,26 +22,22 @@ public class ChunkManager {
     public Chunk getChunk(int chunkX, int chunkY) {
         Vector2i key = new Vector2i(chunkX, chunkY);
         if (!loadedChunks.containsKey(key)) {
-            Chunk chunk = new Chunk(SIZE, key, generator);
+            Chunk chunk = new Chunk(SIZE, key, generator, false);
             loadedChunks.put(key, chunk);
         }
         return loadedChunks.get(key);
     }
 
     public void loadChunks() {
-        Chunk chunk1 = new Chunk(SIZE, new Vector2i(0, 1), generator);
-        Chest chest = new Chest(32, 32, TextureManager.get().getObject(ObjectID.CHEST));
-        Chest chest1 = new Chest(32, 32, TextureManager.get().getObject(ObjectID.CHEST));
-        Chest chest2 = new Chest(32, 32, TextureManager.get().getObject(ObjectID.CHEST));
+        Chunk chunk1 = new Chunk(SIZE, new Vector2i(0, 1), generator, false);
+        Chest chest = new Chest();
         chunk1.addObject(new Vector2i(7,13), chest);
-        chunk1.addObject(new Vector2i(5, 10), chest1);
-        chunk1.addObject(new Vector2i(6, 11), chest2);
         loadedChunks.put(new Vector2i(0, 1), chunk1);
-        loadedChunks.put(new Vector2i(0,0), new Chunk(SIZE, new Vector2i(0,0), generator));
-        loadedChunks.put(new Vector2i(1,0), new Chunk(SIZE, new Vector2i(1,0), generator));
-        loadedChunks.put(new Vector2i(2,0), new Chunk(SIZE, new Vector2i(2,0), generator));
-        loadedChunks.put(new Vector2i(2,1), new Chunk(SIZE, new Vector2i(2,1), generator));
-        loadedChunks.put(new Vector2i(1,1), new Chunk(SIZE, new Vector2i(1,1), generator));
+        loadedChunks.put(new Vector2i(0,0), new Chunk(SIZE, new Vector2i(0,0), generator, false));
+        loadedChunks.put(new Vector2i(1,0), new Chunk(SIZE, new Vector2i(1,0), generator, false));
+        loadedChunks.put(new Vector2i(2,0), new Chunk(SIZE, new Vector2i(2,0), generator, false));
+        loadedChunks.put(new Vector2i(2,1), new Chunk(SIZE, new Vector2i(2,1), generator, false));
+        loadedChunks.put(new Vector2i(1,1), new Chunk(SIZE, new Vector2i(1,1), generator, false));
     }
 
     public Map<Vector2i, Chunk> getLoadedChunks() {

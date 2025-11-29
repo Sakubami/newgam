@@ -9,6 +9,6 @@ public enum TileTexture implements TexturePath {
 
     @Override
     public String getPath() {
-        return "tiles/" + this.name().toLowerCase();
+        return this.name().toLowerCase();
     }
 }

@@ -1,18 +1,17 @@
 package xyz.sakubami.firstgam.objects.container;
 
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import xyz.sakubami.firstgam.items.ItemStack;
 import xyz.sakubami.firstgam.objects.GameObject;
 import xyz.sakubami.firstgam.saving.SerializedItemStack;
 import xyz.sakubami.firstgam.saving.SerializedObject;
-import xyz.sakubami.firstgam.textures.objects.ObjectTexture;
+import xyz.sakubami.firstgam.textures.objects.ObjectType;
 
 import java.util.HashMap;
 
 public abstract class ItemHolder extends GameObject {
     private final HashMap<Integer, ItemStack> items;
 
-    public ItemHolder(ObjectTexture texture, String id) {
+    public ItemHolder(ObjectType texture, String id) {
         super(texture, id);
         this.items = new HashMap<>();
     }
