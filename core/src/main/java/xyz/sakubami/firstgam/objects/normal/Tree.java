@@ -1,10 +1,11 @@
 package xyz.sakubami.firstgam.objects.normal;
 
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import xyz.sakubami.firstgam.objects.GameObject;
+import xyz.sakubami.firstgam.textures.TextureManager;
+import xyz.sakubami.firstgam.textures.objects.ObjectTexture;
 
 public class Tree extends GameObject {
-    public Tree(float width, float height, TextureRegion texture) {
-        super(width, height, texture);
+    public Tree() {
+        super(ObjectTexture.TREE, "TREE");
     }
 }

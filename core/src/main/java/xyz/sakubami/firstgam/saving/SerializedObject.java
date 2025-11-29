@@ -1,23 +1,18 @@
 package xyz.sakubami.firstgam.saving;
 
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import xyz.sakubami.firstgam.objects.GameObject;
+import xyz.sakubami.firstgam.textures.objects.ObjectTexture;
+import xyz.sakubami.firstgam.user_interfaces.InterfaceT;
 
 import java.util.Map;
 
 public class SerializedObject {
     public int x;
     public int y;
-    public float width;
-    public float height;
-    public TextureRegion texture;
-    public String type;
+    public ObjectTexture texture;
+    public String id;
 
-    public Map<Integer, SerializedItemStack> inventory;
+    public Map<Integer, SerializedItemStack> items;
+    public InterfaceT interfaceT;
 
     public SerializedObject() {}
-
-    public SerializedObject(int x, int y, float width, float height, TextureRegion texture, String type) {
-
-    }
 }

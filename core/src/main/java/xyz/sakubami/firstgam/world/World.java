@@ -58,7 +58,7 @@ public class World {
     }
 
     public void tick() {
-        System.out.println("test");
+        System.out.println("test" + System.currentTimeMillis());
     }
 
     public void render() {

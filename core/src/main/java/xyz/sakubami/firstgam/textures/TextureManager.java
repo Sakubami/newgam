@@ -1,76 +1,51 @@
 package xyz.sakubami.firstgam.textures;
 
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import xyz.sakubami.firstgam.textures.entities.EntityID;
-import xyz.sakubami.firstgam.textures.entities.TallEntityID;
-import xyz.sakubami.firstgam.textures.objects.ObjectID;
-import xyz.sakubami.firstgam.textures.objects.TallObjectID;
-import xyz.sakubami.firstgam.textures.tiles.TileID;
+import xyz.sakubami.firstgam.textures.entities.EntityTexture;
+import xyz.sakubami.firstgam.textures.items.ItemTexture;
+import xyz.sakubami.firstgam.textures.objects.ObjectTexture;
+import xyz.sakubami.firstgam.textures.tiles.TileTexture;
+import xyz.sakubami.firstgam.world.WorldManager;
+
+import java.util.EnumMap;
 
 public class TextureManager {
-
     private static final TextureManager instance = new TextureManager();
     public static TextureManager get() { return instance; }
 
-    private final Path[] paths = Path.values();
-    private TextureRegion[] tiles;
-    private TextureRegion[] objects_0;
-    private TextureRegion[] objects_1;
-    private TextureRegion[] entities_0;
-    private TextureRegion[] entities_1;
+    private final TextureAtlas atlas;
 
-    private TextureManager() {
-        loadTextures();
+    private final EnumMap<ItemTexture, TextureRegion> items = new EnumMap<>(ItemTexture.class);
+    private final EnumMap<TileTexture, TextureRegion> tiles = new EnumMap<>(TileTexture.class);
+    private final EnumMap<ObjectTexture, TextureRegion> objects = new EnumMap<>(ObjectTexture.class);
+    private final EnumMap<EntityTexture, TextureRegion> entities = new EnumMap<>(EntityTexture.class);
+
+    public TextureManager() {
+        atlas = new TextureAtlas(Gdx.files.internal("game.atlas"));
+
+        loadEnum(ItemTexture.values(), items);
+        loadEnum(ObjectTexture.values(), objects);
+        loadEnum(TileTexture.values(), tiles);
+        loadEnum(EntityTexture.values(), entities);
     }
 
-    private void loadTextures() {
-        for (Path path : paths) {
-            Texture texture = new Texture(path.getPath());
-            TextureRegion[][] split = TextureRegion.split(texture, path.getWidth(), path.getHeight());
+    private <E extends Enum<E> & TexturePath> void loadEnum(E[] values, EnumMap<E, TextureRegion> map) {
+        for (E type : values) {
+            String path = type.getPath();
+            TextureRegion region = atlas.findRegion(path);
 
-            int rows = split.length;
-            int cols = split[0].length;
-            TextureRegion[] textureRegions = new TextureRegion[rows * cols];
-
-            for (int y = 0; y < rows; y++) {
-                System.arraycopy(split[y], 0, textureRegions, y * cols, cols);
+            if (region == null) {
+                Gdx.app.error("TextureManager", "Texture not found: " + path);
             }
-
-            switch (path.getPath()) {
-                case "tiles.png" : {
-                    this.tiles = textureRegions;
-                    break;
-                }
-                case "objects_0.png" : {
-                    this.objects_0 = textureRegions;
-                    break;
-                }
-                case "objects_1.png" : {
-                    this.objects_1 = textureRegions;
-                    break;
-                }
-                case "entities_0.png" : {
-                    this.entities_0 = textureRegions;
-                    break;
-                }
-                case "entities_1.png" : {
-                    this.entities_1 = textureRegions;
-                    break;
-                }
-            }
+            
+            map.put(type, region);
         }
     }
 
-    public TextureRegion[] getTiles() { return this.tiles; }
-    public TextureRegion[] getObjects() { return this.objects_0; }
-    public TextureRegion[] getTallObjects() { return this.objects_1; }
-    public TextureRegion[] getEntities() { return this.entities_0; }
-    public TextureRegion[] getTallEntities() { return this.entities_1; }
-
-    public TextureRegion getTile(TileID id) { return this.tiles[id.getID()]; }
-    public TextureRegion getObject(ObjectID id) { return this.objects_0[id.getId()]; }
-    public TextureRegion getTallObject(TallObjectID id) { return this.objects_1[id.getId()]; }
-    public TextureRegion getEntity(EntityID id) { return entities_0[id.getId()]; }
-    public TextureRegion getTallEntity(TallEntityID id) { return entities_1[id.getId()]; }
+    public TextureRegion getItemTexture(ItemTexture texture) { return this.items.get(texture); }
+    public TextureRegion getTileTexture(TileTexture texture) { return this.tiles.get(texture); }
+    public TextureRegion getObjectTexture(ObjectTexture texture) { return this.objects.get(texture); }
+    public TextureRegion getEntityTexture(EntityTexture texture) { return this.entities.get(texture); }
 }

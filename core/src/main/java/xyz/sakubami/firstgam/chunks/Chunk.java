@@ -2,7 +2,6 @@ package xyz.sakubami.firstgam.chunks;
 
 import xyz.sakubami.firstgam.objects.GameObject;
 import xyz.sakubami.firstgam.utils.Vector2i;
-import xyz.sakubami.firstgam.textures.tiles.TileID;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -8,11 +8,11 @@ public record EntityRenderer(SpriteBatch batch, ChunkManager chunkLoader, int ti
 
     public void render() {
         for (Chunk chunk : chunkLoader.getLoadedChunks().values()) {
-            renderChunk(chunk);
+            renderEntities(chunk);
         }
     }
 
-    private void renderChunk(Chunk chunk) {
+    private void renderEntities(Chunk chunk) {
 
     }
 

@@ -4,20 +4,26 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import xyz.sakubami.firstgam.saving.Serializable;
 import xyz.sakubami.firstgam.saving.SerializedObject;
+import xyz.sakubami.firstgam.textures.TextureManager;
+import xyz.sakubami.firstgam.textures.objects.ObjectTexture;
 
 public abstract class GameObject implements Serializable<SerializedObject> {
     private int x;
     private int y;
-    private float width;
-    private float height;
+    private final float width;
+    private final float height;
+    private final ObjectTexture textureT;
     private final TextureRegion texture;
+    private final String id;
 
-    public GameObject(float width, float height, TextureRegion texture) {
+    public GameObject(ObjectTexture textureT, String id) {
         this.x = 0;
         this.y = 0;
-        this.width = width;
-        this.height = height;
-        this.texture = texture;
+        this.id = id;
+        this.textureT = textureT;
+        this.texture = TextureManager.get().getObjectTexture(textureT);
+        this.width = texture.getRegionWidth();
+        this.height = texture.getRegionHeight();
     }
 
     @Override
@@ -25,9 +31,8 @@ public abstract class GameObject implements Serializable<SerializedObject> {
         SerializedObject data = new SerializedObject();
         data.x = x;
         data.y = y;
-        data.width = width;
-        data.height = height;
-        data.type = this.getClass().getSimpleName();
+        data.texture = textureT;
+        data.id = id;
         return data;
     }
 
@@ -35,8 +40,6 @@ public abstract class GameObject implements Serializable<SerializedObject> {
     public void fromData(SerializedObject data) {
         this.x = data.x;
         this.y = data.y;
-        this.width = data.width;
-        this.height = data.height;
     }
 
     public float getX() { return x; }

@@ -2,7 +2,6 @@ package xyz.sakubami.firstgam.chunks;
 
 import xyz.sakubami.firstgam.objects.container.interfaces.Chest;
 import xyz.sakubami.firstgam.textures.TextureManager;
-import xyz.sakubami.firstgam.textures.objects.ObjectID;
 import xyz.sakubami.firstgam.utils.Vector2i;
 
 import java.util.HashMap;

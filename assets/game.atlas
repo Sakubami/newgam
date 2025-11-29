@@ -1,0 +1,20 @@
+game.png
+size: 224, 32
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+pma: false
+chest
+  bounds: 0, 0, 32, 32
+grass
+  bounds: 32, 0, 32, 32
+player
+  bounds: 64, 0, 32, 32
+snow
+  bounds: 96, 0, 32, 32
+sword
+  bounds: 128, 0, 32, 32
+tree
+  bounds: 160, 0, 32, 32
+water
+  bounds: 192, 0, 32, 32

@@ -1,5 +1,6 @@
 package xyz.sakubami.firstgam.entities;
 
+import xyz.sakubami.firstgam.entities.livingentity.LivingEntity;
 import xyz.sakubami.firstgam.entities.livingentity.Player;
 
 import java.util.*;
