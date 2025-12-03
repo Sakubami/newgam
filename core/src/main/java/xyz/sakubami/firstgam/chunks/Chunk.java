@@ -1,13 +1,8 @@
 package xyz.sakubami.firstgam.chunks;
 
-import com.badlogic.gdx.Game;
-import xyz.sakubami.firstgam.items.ItemStack;
 import xyz.sakubami.firstgam.objects.GameObject;
-import xyz.sakubami.firstgam.objects.container.interfaces.Chest;
 import xyz.sakubami.firstgam.saving.Serializable;
 import xyz.sakubami.firstgam.saving.SerializedChunk;
-import xyz.sakubami.firstgam.saving.SerializedItemStack;
-import xyz.sakubami.firstgam.saving.SerializedObject;
 import xyz.sakubami.firstgam.textures.tiles.TileTexture;
 import xyz.sakubami.firstgam.utils.Vector2i;
 
@@ -31,7 +26,6 @@ public class Chunk implements Serializable<SerializedChunk> {
         this.objects = new HashMap<>();
     }
 
-
     @Override
     public SerializedChunk toData() {
         SerializedChunk data = new SerializedChunk();
@@ -40,7 +34,7 @@ public class Chunk implements Serializable<SerializedChunk> {
         data.size = size;
         data.tiles = tiles;
         for(Vector2i loc : objects.keySet()) {
-            data.objects.put(loc.x() + "%" + loc.y(), objects.get(loc).toData());
+            data.objects.put(Vector2i.toString(loc), objects.get(loc).toData());
         }
         return data;
     }
@@ -49,7 +43,7 @@ public class Chunk implements Serializable<SerializedChunk> {
     public void fromData(SerializedChunk data) {
         for(String key : data.objects.keySet()) {
             String[] split = key.split("%");
-            objects.put(new Vector2i(Integer.parseInt(split[0]), Integer.parseInt(split[1])), GameObject.createFromData(data.objects.get(key)));
+            objects.put(Vector2i.fromString(key), GameObject.createFromData(data.objects.get(key)));
         }
         this.tiles = data.tiles;
     }

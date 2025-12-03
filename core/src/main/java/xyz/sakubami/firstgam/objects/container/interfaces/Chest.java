@@ -5,7 +5,7 @@ import xyz.sakubami.firstgam.user_interfaces.InterfaceT;
 
 public class Chest extends InterfaceHolder {
     public Chest() {
-        super(ObjectType.TREE, "CHEST", InterfaceT.INVENTORY);
+        super(ObjectType.CHEST, "CHEST", InterfaceT.INVENTORY);
     }
 
     public void openInterface() {

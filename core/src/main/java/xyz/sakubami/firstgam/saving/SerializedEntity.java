@@ -11,5 +11,7 @@ public class SerializedEntity {
     public String id;
     public UUID uuid;
 
+    public String displayName;
+
     public SerializedEntity() {}
 }
