@@ -1,115 +1,185 @@
 package xyz.sakubami.firstgam.chunks;
 
 import com.google.gson.Gson;
+import xyz.sakubami.firstgam.entities.Entity;
+import xyz.sakubami.firstgam.entities.livingentity.LivingEntity;
 import xyz.sakubami.firstgam.entities.livingentity.Player;
-import xyz.sakubami.firstgam.objects.container.interfaces.Chest;
+import xyz.sakubami.firstgam.entities.nonLivingEntity.NonLivingEntity;
 import xyz.sakubami.firstgam.saving.ChunkBatch;
+import xyz.sakubami.firstgam.saving.SerializedChunk;
+import xyz.sakubami.firstgam.saving.SerializedEntity;
+import xyz.sakubami.firstgam.utils.Coordinates;
 import xyz.sakubami.firstgam.utils.Vector2i;
 import xyz.sakubami.firstgam.world.World;
 import xyz.sakubami.firstgam.world.WorldManager;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
+/**
+ * handles chunk loading, updating and unloading
+ */
 public class ChunkManager {
+    private final Gson gson = new Gson();
     private final WorldGenerator generator;
     private final int CHUNK_SIZE = 16;
     private final int BATCH_SIZE = 3;
-    private World world;
+    private final World world;
 
-    private final Map<Vector2i, Chunk> loadedChunks;
-    private final Map<Vector2i, ChunkBatch> loadedBatches;
+    private final Map<Vector2i, Chunk> chunks;
+    private final Map<Vector2i, ChunkBatch> batches;
+    private final Map<UUID, Entity> entities;
 
     public ChunkManager(WorldGenerator generator) {
-        System.out.println("ChunkManagerInit: " + System.currentTimeMillis());
         this.generator = generator;
-        this.loadedChunks = new HashMap<>();
-        this.loadedBatches = new HashMap<>();
+        this.chunks = new HashMap<>();
+        this.batches = new HashMap<>();
+        this.entities = new HashMap<>();
         this.world = WorldManager.get().getCurrentWorld();
-        loadChunks();
     }
 
     public void update() {
         handleBatches();
     }
 
-    private void loadChunks() {
-        Chunk chunk1 = new Chunk(CHUNK_SIZE, new Vector2i(0, 1), generator, false);
-        Chest chest = new Chest();
-        chunk1.addObject(new Vector2i(7,13), chest);
-        loadedChunks.put(new Vector2i(0, 1), chunk1);
-        loadedChunks.put(new Vector2i(0,0), new Chunk(CHUNK_SIZE, new Vector2i(0,0), generator, false));
-        loadedChunks.put(new Vector2i(1,0), new Chunk(CHUNK_SIZE, new Vector2i(1,0), generator, false));
-        loadedChunks.put(new Vector2i(2,0), new Chunk(CHUNK_SIZE, new Vector2i(2,0), generator, false));
-        loadedChunks.put(new Vector2i(2,1), new Chunk(CHUNK_SIZE, new Vector2i(2,1), generator, false));
-        loadedChunks.put(new Vector2i(1,1), new Chunk(CHUNK_SIZE, new Vector2i(1,1), generator, false));
+    public void shutdown() {
+        for(Vector2i v : batches.keySet()) {
+            unloadBatch(v);
+            System.out.println("SHUTDOWN");
+        }
     }
 
-    private void updateChunksAroundPlayers() {
-
-    }
-
+    /**
+     * should load the chunkbatches around every player connected to the world
+     */
     private void handleBatches() {
+        Set<Vector2i> loadQueue = new HashSet<>();
+        Set<Vector2i> unloadQueue = new HashSet<>(batches.keySet());
         List<Player> players = world.getOnlinePlayers();
-        for(Player player : players) {
-            int batchX = (int) Math.floor(((player.getX() / world.getTileSize()) / CHUNK_SIZE) / BATCH_SIZE);
-            int batchY = (int) Math.floor(((player.getY() / world.getTileSize()) / CHUNK_SIZE) / BATCH_SIZE);
 
-            Vector2i batchLocation = new Vector2i(batchX, batchY);
+        Set<Vector2i> occupiedBatches = new HashSet<>();
+        for (Player player : players) {
+            occupiedBatches.add(Coordinates.getChunkBatch(player));
+        }
 
-            if (!loadedBatches.containsKey(batchLocation)) {
-                loadBatch(batchLocation);
-            }
-
-            int i = 0;
-            for (Vector2i loc : loadedBatches.keySet()) {
-                System.out.println(loc.x() + " <- X and Y -> " + loc.y() + " increment: " + i);
-                i++;
-                if (loc.x() - batchX > 1 || loc.y() - batchY > 1) {
-                    unloadBatch(loc);
+        for(Vector2i currentBatch : occupiedBatches) {
+            for (int dx = -1; dx <= 1; dx++) {
+                for (int dy = -1; dy <= 1; dy++) {
+                    Vector2i neighbor = new Vector2i(currentBatch.x() + dx, currentBatch.y() + dy);
+                    loadQueue.add(neighbor);
+                    unloadQueue.remove(neighbor);
                 }
             }
         }
+
+        for (Vector2i pos : loadQueue) {
+            if (!batches.containsKey(pos))
+                loadBatch(pos);
+        }
+
+        for (Vector2i pos : unloadQueue) {
+            unloadBatch(pos);
+        }
     }
 
-    private void loadBatch(Vector2i location) {
-        
+    /**
+     * just loads chunkBatches with the given location ---> name
+     * puts empty chunks inside the batch on generation until saving for performace reasons
+     * @param loc
+     */
+    private void loadBatch(Vector2i loc) {
+        ChunkBatch batch = new ChunkBatch();
+
+        String fileName = loc.toString();
+        try(Reader reader = new FileReader("batches/" + fileName)) {
+            batch = gson.fromJson(reader, ChunkBatch.class);
+        } catch (IOException e) {
+            batch.chunks = new HashMap<>();
+            batch.entities = new HashMap<>();
+        }
+
+        if (batch.chunks.isEmpty()) {
+            int chunkX = loc.x() * 3;
+            int chunkY = loc.y() * 3;
+            for(int i = chunkX; i <= chunkX + 2; i++) {
+                for(int i2 = chunkY; i2 <= chunkY + 2; i2++) {
+                    Vector2i v = new Vector2i(i, i2);
+                    Chunk chunk = new Chunk(CHUNK_SIZE);
+                    batch.chunks.put(v.toString(), chunk.toData());
+                    chunk.generateTiles(generator, v);
+                    this.chunks.put(v, chunk);
+                }
+            }
+        } else {
+            for (Map.Entry<String, SerializedChunk> entry : batch.chunks.entrySet()) {
+                Vector2i chunkPos = Vector2i.fromString(entry.getKey());
+                Chunk chunk = new Chunk(CHUNK_SIZE);
+                chunk.fromData(entry.getValue());
+                this.chunks.put(chunkPos, chunk);
+            }
+        }
+
+        if (!batch.entities.isEmpty())
+            for (SerializedEntity data : batch.entities.values()) {
+                Entity entity = Entity.createFromData(data);
+                entities.put(entity.getUuid(), entity);
+            }
+
+
+        batch.entities = new HashMap<>();
+        this.batches.put(loc, batch);
     }
 
+    /**
+     * should handle the unloading and saving of the chunks correctly
+     * im keeping the loadedchunks in a separate list for uhm reasons
+     * @param loc position of the batch
+     */
     private void unloadBatch(Vector2i loc) {
         Path path = Paths.get("batches");
+        ChunkBatch newBatch = new ChunkBatch();
+        newBatch.chunks = new HashMap<>();
+        newBatch.entities = new HashMap<>();
+        ChunkBatch batch = batches.get(loc);
+
+        for (String v : batch.chunks.keySet()) {
+            Vector2i chunkPos = Vector2i.fromString(v);
+            Chunk chunk = chunks.get(chunkPos);
+            newBatch.chunks.put(chunkPos.toString(), chunk.toData());
+            chunks.remove(chunkPos);
+        }
+
+        for (Map.Entry<UUID, Entity> entry : entities.entrySet()) {
+            Vector2i pos = Coordinates.getChunkBatch(entry.getValue());
+            Vector2i distance = pos.subtract(loc);
+            if  (distance.x() > 0 || distance.y() > 0)
+                continue;
+            newBatch.entities.put(entry.getKey(), entry.getValue().toData());
+            entities.remove(entry.getKey());
+        }
 
         try {
-            Files.createDirectories(path);
+            if (!Files.exists(path))
+                Files.createDirectories(path);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        Gson gson = new Gson();
-        try(Writer writer = new FileWriter("batches/" + loc.x() + "%" + loc.y())) {
-            gson.toJson(loadedBatches.get(loc), writer);
+        try(Writer writer = new FileWriter("batches/" + loc.toString())) {
+            gson.toJson(newBatch, writer);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        loadedBatches.remove(loc);
+        batches.remove(loc);
     }
 
-    public Map<Vector2i, Chunk> getLoadedChunks() {
-        return loadedChunks;
-    }
+    public Map<Vector2i, Chunk> getChunks() { return chunks; }
+    public Map<UUID, Entity> getEntities() { return this.entities; }
 
-    public Chunk getChunkAbsolute(Vector2i vector) {
-        return loadedChunks.get(vector);
-    }
 }
 
 

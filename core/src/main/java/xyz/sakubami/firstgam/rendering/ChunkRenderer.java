@@ -8,21 +8,23 @@ import xyz.sakubami.firstgam.utils.Vector2i;
 import xyz.sakubami.firstgam.chunks.Chunk;
 import xyz.sakubami.firstgam.chunks.ChunkManager;
 
-public record ChunkRenderer(SpriteBatch batch, ChunkManager chunkLoader, int tileSize) {
+public record ChunkRenderer(SpriteBatch batch, ChunkManager chunkManager, int tileSize) {
 
     public void render() {
-        for (Chunk chunk : chunkLoader.getLoadedChunks().values()) {
-            renderChunk(chunk);
+        for (Vector2i pos : chunkManager.getChunks().keySet()) {
+            renderChunk(pos);
         }
     }
 
-    private void renderChunk(Chunk chunk) {
+    private void renderChunk(Vector2i pos) {
+        Chunk chunk = chunkManager.getChunks().get(pos);
+
         for (int y = 0; y < chunk.getSize(); y++) {
             for (int x = 0; x < chunk.getSize(); x++) {
                 TileTexture tile = chunk.getTiles()[x + y * chunk.getSize()];
 
-                float worldX = (chunk.getChunkX() * chunk.getSize() + x) * tileSize;
-                float worldY = (chunk.getChunkY() * chunk.getSize() + y) * tileSize;
+                int worldX = (pos.x() * chunk.getSize() + x) * tileSize;
+                int worldY = (pos.y() * chunk.getSize() + y) * tileSize;
 
                 batch.draw(TextureManager.get().getTileTexture(tile), worldX, worldY);
                 GameObject object = chunk.getObjectAt(new Vector2i(x, y));

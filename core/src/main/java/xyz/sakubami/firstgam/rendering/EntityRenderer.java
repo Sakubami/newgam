@@ -1,19 +1,23 @@
 package xyz.sakubami.firstgam.rendering;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import xyz.sakubami.firstgam.chunks.Chunk;
 import xyz.sakubami.firstgam.chunks.ChunkManager;
+import xyz.sakubami.firstgam.entities.Entity;
+import xyz.sakubami.firstgam.entities.livingentity.LivingEntity;
 
-public record EntityRenderer(SpriteBatch batch, ChunkManager chunkLoader, int tileSize) {
+import java.util.Map;
+import java.util.UUID;
 
+public record EntityRenderer(SpriteBatch batch, ChunkManager chunkmanager, int tileSize) {
     public void render() {
-        for (Chunk chunk : chunkLoader.getLoadedChunks().values()) {
-            renderEntities(chunk);
-        }
+        renderEntities();
     }
 
-    private void renderEntities(Chunk chunk) {
-
+    private void renderEntities() {
+        for (Map.Entry<UUID, Entity> entry : chunkmanager.getEntities().entrySet()) {
+            Entity entity = entry.getValue();
+            batch.draw(entity.getTexture(), entity.getX(), entity.getY());
+        }
     }
 
     public void dispose() {

@@ -38,11 +38,11 @@ public class TitleScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         batch.begin();
-        font.draw(batch, "MY AWESOME GAME",
+        font.draw(batch, "this is a header lol",
             0, Gdx.graphics.getHeight() / 2f + 50,
             Gdx.graphics.getWidth(), Align.center, false);
 
-        font.draw(batch, "Press ENTER to Start",
+        font.draw(batch, "Press ENTER",
             0, Gdx.graphics.getHeight() / 2f - 50,
             Gdx.graphics.getWidth(), Align.center, false);
 

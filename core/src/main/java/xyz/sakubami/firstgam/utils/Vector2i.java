@@ -1,5 +1,13 @@
 package xyz.sakubami.firstgam.utils;
 
+import java.util.Vector;
+
+/**
+ *
+ * Descibes 2D coordinates *shrug*
+ * @param x coordinate
+ * @param y coordinate
+ */
 public record Vector2i(int x, int y) {
 
     public static Vector2i fromString(String v) {
@@ -7,8 +15,20 @@ public record Vector2i(int x, int y) {
         return new Vector2i(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
     }
 
-    public static String toString(Vector2i v) {
-        return v.x + "%" + v.y;
+    public String toString() {
+        return x + "%" + y;
+    }
+
+    public Vector2i subtract(Vector2i subtractor) {
+        int x1 = x - subtractor.x();
+        int y1 = y - subtractor.y();
+        return new Vector2i(x1, 1);
+    }
+
+    public Vector2i add(Vector2i adder) {
+        int x1 = x - adder.x();
+        int y1 = y - adder.y();
+        return new Vector2i(x1, 1);
     }
 }
 

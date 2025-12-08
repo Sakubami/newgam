@@ -7,8 +7,6 @@ import xyz.sakubami.firstgam.utils.Vector2i;
 import java.util.Map;
 
 public class SerializedChunk {
-    public int chunkX;
-    public int chunkY;
     public TileTexture[] tiles;
     public int size;
     public Map<String, SerializedObject> objects;

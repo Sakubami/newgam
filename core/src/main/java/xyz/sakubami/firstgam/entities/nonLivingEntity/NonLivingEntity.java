@@ -1,14 +1,13 @@
-package xyz.sakubami.firstgam.entities.livingentity;
+package xyz.sakubami.firstgam.entities.nonLivingEntity;
 
 import xyz.sakubami.firstgam.entities.Entity;
 import xyz.sakubami.firstgam.saving.SerializedEntity;
 import xyz.sakubami.firstgam.textures.entities.EntityType;
-import xyz.sakubami.firstgam.utils.Vector2i;
 
-public abstract class LivingEntity extends Entity {
+public abstract class NonLivingEntity extends Entity {
     private String displayName = "NULL";
 
-    public LivingEntity(EntityType textureT, String id) {
+    public NonLivingEntity(EntityType textureT, String id) {
         super(textureT, id);
     }
 
@@ -21,9 +20,4 @@ public abstract class LivingEntity extends Entity {
 
     public void setName(String displayName) { this.displayName = displayName; }
     public String getName() { return this.displayName; }
-    public Vector2i getTilePos() {
-        int x = (int) Math.floor(super.getX());
-        int y = (int) Math.floor(super.getY());
-        return new Vector2i(x / 32, y / 32);
-    }
 }

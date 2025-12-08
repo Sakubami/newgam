@@ -21,7 +21,7 @@ public class WorldManager {
     public void loadWorld() {
         this.currentWorld = new World("BITCH");
         currentWorld.init();
-        currentWorld.connectPlayer(new Player("SAKUBAI"));
+        currentWorld.connectPlayer(new Player());
     }
 
     public void createNewWorld() {
@@ -30,5 +30,9 @@ public class WorldManager {
 
     public World getCurrentWorld() {
         return this.currentWorld;
+    }
+
+    public void shutdown() {
+        currentWorld.shutdown();
     }
 }

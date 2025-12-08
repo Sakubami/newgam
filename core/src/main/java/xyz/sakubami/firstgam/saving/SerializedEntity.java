@@ -7,7 +7,7 @@ import java.util.UUID;
 public class SerializedEntity {
     public float x;
     public float y;
-    public EntityType texture;
+    public EntityType type;
     public String id;
     public UUID uuid;
 

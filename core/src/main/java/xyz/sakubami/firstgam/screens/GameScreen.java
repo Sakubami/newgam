@@ -20,7 +20,6 @@ public class GameScreen implements Screen {
         this.loadedWorld = WorldManager.get().getCurrentWorld();
     }
 
-
     @Override
     public void resize(int width, int height) {
         loadedWorld.resize(width, height, true);
@@ -32,7 +31,9 @@ public class GameScreen implements Screen {
         loadedWorld.render();
     }
 
-    @Override public void dispose() {}
+    @Override public void dispose() {
+        WorldManager.get().shutdown();
+    }
 
     @Override public void pause() {}
     @Override public void resume() {}

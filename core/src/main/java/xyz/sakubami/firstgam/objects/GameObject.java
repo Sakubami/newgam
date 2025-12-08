@@ -15,7 +15,7 @@ public abstract class GameObject implements Serializable<SerializedObject> {
     private int y;
     private final float width;
     private final float height;
-    private final ObjectType textureT;
+    private final ObjectType type;
     private final TextureRegion texture;
     private final String id;
 
@@ -23,7 +23,7 @@ public abstract class GameObject implements Serializable<SerializedObject> {
         this.x = 0;
         this.y = 0;
         this.id = id;
-        this.textureT = textureT;
+        this.type = textureT;
         this.texture = TextureManager.get().getObjectTexture(textureT);
         this.width = texture.getRegionWidth();
         this.height = texture.getRegionHeight();
@@ -34,7 +34,7 @@ public abstract class GameObject implements Serializable<SerializedObject> {
         SerializedObject data = new SerializedObject();
         data.x = x;
         data.y = y;
-        data.texture = textureT;
+        data.type = type;
         data.id = id;
         return data;
     }
@@ -52,9 +52,9 @@ public abstract class GameObject implements Serializable<SerializedObject> {
     }
 
     public static GameObject createFromData(SerializedObject data) {
-        Supplier<? extends GameObject> supplier = registry.get(data.texture);
+        Supplier<? extends GameObject> supplier = registry.get(data.type);
         if (supplier == null) {
-            throw new RuntimeException("Unknown GameObject type: " + data.texture);
+            throw new RuntimeException("Unknown GameObject type: " + data.type);
         }
         GameObject obj = supplier.get();   // concrete instance
         obj.fromData(data);                // populate fields
