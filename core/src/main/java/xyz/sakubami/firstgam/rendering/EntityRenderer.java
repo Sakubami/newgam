@@ -4,9 +4,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import xyz.sakubami.firstgam.chunks.ChunkManager;
 import xyz.sakubami.firstgam.entities.Entity;
 import xyz.sakubami.firstgam.entities.livingentity.LivingEntity;
+import xyz.sakubami.firstgam.entities.livingentity.Player;
+import xyz.sakubami.firstgam.world.WorldManager;
 
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public record EntityRenderer(SpriteBatch batch, ChunkManager chunkmanager, int tileSize) {
     public void render() {
@@ -14,8 +15,17 @@ public record EntityRenderer(SpriteBatch batch, ChunkManager chunkmanager, int t
     }
 
     private void renderEntities() {
-        for (Map.Entry<UUID, Entity> entry : chunkmanager.getEntities().entrySet()) {
-            Entity entity = entry.getValue();
+        Map<UUID, Entity> v = new HashMap<>(chunkmanager.getEntities());
+
+        for(Player player : WorldManager.get().getCurrentWorld().getOnlinePlayers()) {
+            v.put(player.getUuid(), player);
+        }
+
+        List<Entity> sorted = v.values().stream()
+            .sorted(Comparator.comparingDouble(Entity::getY).reversed())
+            .toList();
+
+        for (Entity entity : sorted) {
             batch.draw(entity.getTexture(), entity.getX(), entity.getY());
         }
     }

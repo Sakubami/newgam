@@ -63,7 +63,7 @@ public class World {
         chunkManager.update();
         Player player = this.onlinePlayers.get(0);
         float x = player.getX();
-        player.setX(x += 3);
+        player.setX(x += 20);
         System.out.println("x: " + this.onlinePlayers.get(0).getTilePos().x() + " y: " + this.onlinePlayers.get(0).getTilePos().y());
     }
 
@@ -93,6 +93,7 @@ public class World {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         chunkRenderer.render();
+        entityRenderer.render();
         batch.end();
     }
 
