@@ -1,0 +1,10 @@
+package xyz.sakubami.protocol_apocalypse.server.saving.data;
+
+import xyz.sakubami.protocol_apocalypse.shared.types.ItemType;
+
+public class SerializedItemStack {
+    public ItemType texture;
+    public String id;
+
+    public SerializedItemStack() {}
+}
